@@ -30,7 +30,7 @@ class Player(sprite.Sprite):
         screen.blit(self.image,  (self.rect.x, self.rect.y))
 
 
-#Эти строчки нужны для движения
+# Эти строчки нужны для движения
 #
 #if e.type == KEYDOWN and e.key == K_LEFT:
 #   left = True
