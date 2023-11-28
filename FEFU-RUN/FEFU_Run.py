@@ -1,5 +1,7 @@
 import pygame as pg
 import random as rd
+import sys
+import classes
 
 clock = pg.time.Clock()
 secure_clock = pg.time.Clock()
@@ -17,24 +19,12 @@ background = pg.image.load("images/bg.jpg").convert()
 bg = pg.transform.scale(background, (width, height))
 bg_music = pg.mixer.Sound('sounds/bgmusic.mp3')
 
-walk_left_anim = [
-    pg.image.load('images/walk/WalkSide0000.png').convert_alpha(),
-    pg.image.load('images/walk/WalkSide0001.png').convert_alpha(),
-    pg.image.load('images/walk/WalkSide0002.png').convert_alpha(),
-    pg.image.load('images/walk/WalkSide0003.png').convert_alpha()
-]
+pos_x = 50
+pos_y = 275
 
-walk_right_anim = [
-
-]
-
-jump_anim = [
-
-]
-
-die_anim = [
-
-]
+moving_sprites = pg.sprite.Group()
+player = classes.Player(pos_x, pos_y)
+moving_sprites.add(player)
 
 secure_anim = [
     pg.image.load('images/security/security_10000.png').convert_alpha(),
@@ -53,14 +43,8 @@ secure_anim = [
     pg.image.load('images/security/security_10013.png').convert_alpha()
 ]
 
-flying_entity_anim = [
-
-]
-
 player_anim_count = 0
 player_speed = 4.75
-player_x = 50
-player_y = 275
 
 secure_anim_count = 0
 secure_x = 610
@@ -73,13 +57,21 @@ running = True
 is_jump = False
 jump_height = 7
 
-while running:
+while True:
     clock.tick(13)
     screen.blit(bg, (bg_x, 0))
     screen.blit(bg, (bg_x + 600, 0))
     screen.blit(secure_anim[secure_anim_count], (secure_x, 280))
+    
+    moving_sprites.draw(screen)
+    moving_sprites.update(0.5)
 
-    screen.blit(walk_left_anim[player_anim_count], (player_x, player_y))
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
+            sys.exit()
+        if event.type == pg.KEYUP:
+            player.animate()
 
     keys = pg.key.get_pressed()
     
@@ -88,10 +80,10 @@ while running:
     # else:
     #     screen.blit(walk_right_anim[player_anim_count], (player_x, 275))
     
-    if keys[pg.K_LEFT] and player_x > 50:
-        player_x -= player_speed
-    elif keys[pg.K_RIGHT] and player_x < 150:
-        player_x += player_speed
+    if keys[pg.K_LEFT] and pos_x > 50:
+        pos_x -= player_speed
+    elif keys[pg.K_RIGHT] and pos_x < 150:
+        pos_x += player_speed
 
     if not is_jump:
         if keys[pg.K_UP]:
@@ -99,9 +91,9 @@ while running:
     else:
         if jump_height >= -7:
             if jump_height > 0:
-                player_y -= (jump_height ** 2) / 1.5
+                pos_y -= (jump_height ** 2) / 1.5
             else:
-                player_y += (jump_height ** 2) / 1.5
+                pos_y += (jump_height ** 2) / 1.5
             jump_height -= 1
         else:
             is_jump = False
